@@ -13,7 +13,8 @@ class PSO(object):
         self.x_bound = x_bound  # 解空间范围 例如[-10, 10]
         self.v_max = np.ones(shape=(self.population_size, self.dim)) * v_max # 最大速度
         
-        self.x = np.random.uniform(low=self.x_bound[0], high=self.x_bound[1], size=(self.population_size, self.dim))  # 初始化粒子群位置
+        #self.x = np.random.uniform(low=self.x_bound[0], high=self.x_bound[1], size=(self.population_size, self.dim))  # 初始化粒子群位置
+        self.x = np.zeros(shape=(self.population_size, self.dim))
         self.v = np.random.rand(self.population_size, self.dim) # 初始化离子群速度
         fitness = self.calculate_fitness(self.x)
         self.p = self.x  # 个体最佳位置
@@ -23,12 +24,12 @@ class PSO(object):
 
     # 目标函数
     def calculate_fitness(self, x):
-        arr = []
+        t = []
         for i in range(self.population_size):
-            arr.append([20, 3])
-        c = np.array(arr)
-        t = x - c
-        return np.sum(np.square(t), axis=1)
+            t.append([20, 30])
+        c = x - np.array(t)
+        result = np.sum(np.square(c), axis=1)
+        return result
 
     def evolve(self):
         evolve_data = []
@@ -38,11 +39,6 @@ class PSO(object):
 
             # 更新速度和权重
             self.v = self.w * self.v + self.c1 * r1 * (self.p - self.x) + self.c2 * r2 * (self.pg - self.x)
-
-            #对速度的限制
-            if (self.v - self.v_max).any() > 0:
-                self.v = self.v_max
-
             #更新位置
             self.x = self.v + self.x
             fitness = self.calculate_fitness(self.x)
@@ -59,17 +55,17 @@ class PSO(object):
 
             # 封装数据
             d = dict()
-            d['step'] = step
-            d['global_best_fitness'] = self.global_best_fitness
+            d['x'] = step
+            d['y'] = self.global_best_fitness
             evolve_data.append(d)
         return evolve_data
  
-pso = PSO(population_size=1000, max_steps=30000, dim=2, learning_factor=[5, 10], x_bound=[0, 0], v_max=1)
+pso = PSO(population_size=10, max_steps=100, dim=2, learning_factor=[3, 3], x_bound=[3, 3], v_max=1)
 data = pso.evolve()
 x = []
 y = []
 for t in data:
-    x.append(t['step'])
-    y.append(t['global_best_fitness'])
-plt.plot(x, y)
+    x.append(t['x'])
+    y.append(t['y'])
+plt.plot(x, y, 'r')
 plt.show()
