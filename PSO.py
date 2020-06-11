@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 class PSO(object):
 
     def __init__(self, population_size, max_steps, dim, learning_factor, x_bound, v_max):
-        self.w = 1.0
+        self.w = 0.9
         self.c1 = learning_factor[0]
         self.c2 = learning_factor[1]
         self.population_size = population_size  # 粒子群数量
