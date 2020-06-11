@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 
 class PSO(object):
 
-    def __init__(self, population_size, max_steps, dim, learning_factor, x_bound, v_max):
+    def __init__(self, population_size, max_steps, dim, learning_factor, v_max):
         self.w = 0.9
         self.c1 = learning_factor[0]
         self.c2 = learning_factor[1]
         self.population_size = population_size  # 粒子群数量
         self.dim = dim  # 搜索空间的维度
         self.max_steps = max_steps  # 迭代次数
-        self.x_bound = x_bound  # 解空间范围 例如[-10, 10]
+        #self.x_bound = x_bound  # 解空间范围 例如[-10, 10]
         self.v_max = np.ones(shape=(self.population_size, self.dim)) * v_max # 最大速度
         
         #self.x = np.random.uniform(low=self.x_bound[0], high=self.x_bound[1], size=(self.population_size, self.dim))  # 初始化粒子群位置
@@ -60,7 +60,7 @@ class PSO(object):
             evolve_data.append(d)
         return evolve_data
  
-pso = PSO(population_size=10, max_steps=100, dim=2, learning_factor=[3, 3], x_bound=[3, 3], v_max=1)
+pso = PSO(population_size=10, max_steps=100, dim=2, learning_factor=[3, 3], v_max=1)
 data = pso.evolve()
 x = []
 y = []
