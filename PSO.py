@@ -3,13 +3,14 @@ import matplotlib.pyplot as plt
 
 class PSO(object):
 
-    def __init__(self, population_size, max_steps, dim, learning_factor, v_max):
-        self.w = 0.9
+    def __init__(self, population_size, max_steps, dim, learning_factor, v_max, target):
+        self.w = 0.8
         self.c1 = learning_factor[0]
         self.c2 = learning_factor[1]
         self.population_size = population_size  # 粒子群数量
         self.dim = dim  # 搜索空间的维度
         self.max_steps = max_steps  # 迭代次数
+        self.target = target
         #self.x_bound = x_bound  # 解空间范围 例如[-10, 10]
         self.v_max = np.ones(shape=(self.population_size, self.dim)) * v_max # 最大速度
         
@@ -26,7 +27,7 @@ class PSO(object):
     def calculate_fitness(self, x):
         t = []
         for i in range(self.population_size):
-            t.append([20, 30])
+            t.append([self.target[0], self.target[1]])
         c = x - np.array(t)
         result = np.sum(np.square(c), axis=1)
         return result
@@ -51,16 +52,16 @@ class PSO(object):
             if np.min(fitness) < self.global_best_fitness:
                 self.pg = self.x[np.argmin(fitness)]
                 self.global_best_fitness = np.min(fitness)
-            #print('best fitness: %.5f, mean fitness: %.5f' % (self.global_best_fitness, np.mean(fitness)))
-
-            # 封装数据
-            d = dict()
-            d['x'] = step
-            d['y'] = self.global_best_fitness
-            evolve_data.append(d)
+                
+                # 封装路径数据
+                d = dict()
+                d['x'] = self.pg[0]
+                d['y'] = self.pg[1]
+                evolve_data.append(d)
+            #print('best fitness: %.5f, mean fitness: %.5f' % (self.global_best_fitness, np.mean(fitness)))  
         return evolve_data
  
-pso = PSO(population_size=10, max_steps=100, dim=2, learning_factor=[3, 3], v_max=1)
+pso = PSO(population_size=90000, max_steps=200, dim=2, learning_factor=[3, 3], v_max=1, target=[10, 10])
 data = pso.evolve()
 x = []
 y = []
