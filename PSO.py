@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 
 class PSO(object):
 
-    def __init__(self, population_size, max_steps, dim, learning_factor, v_max, target):
-        self.w = 0.8
+    def __init__(self, w, population_size, max_steps, dim, learning_factor, v_max, target):
+        self.w = w
         self.c1 = learning_factor[0]
         self.c2 = learning_factor[1]
         self.population_size = population_size  # 粒子群数量
@@ -61,12 +61,14 @@ class PSO(object):
             #print('best fitness: %.5f, mean fitness: %.5f' % (self.global_best_fitness, np.mean(fitness)))  
         return evolve_data
  
-pso = PSO(population_size=90000, max_steps=200, dim=2, learning_factor=[3, 3], v_max=1, target=[10, 10])
+
+pso = PSO(w=0.8, population_size=100000, max_steps=1000, dim=2, learning_factor=[3, 3], v_max=1, target=[40, 30])
 data = pso.evolve()
 x = []
 y = []
 for t in data:
     x.append(t['x'])
     y.append(t['y'])
-plt.plot(x, y, 'r')
+plt.plot(x, y, 'red')
 plt.show()
+
