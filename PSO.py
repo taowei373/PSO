@@ -1,12 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 class PSO(object):
 
-    def __init__(self, w, population_size, max_steps, dim, learning_factor, v_max, target):
-        self.w = w
-        self.c1 = learning_factor[0]
-        self.c2 = learning_factor[1]
+    def __init__(self, population_size, max_steps, dim, v_max, target):
+        self.w = 0.9
+        self.wmin = 0.4
+        self.wmax = self.w
+
+        self.c1 = 2
+        self.c2 = 2
+
         self.population_size = population_size  # 粒子群数量
         self.dim = dim  # 搜索空间的维度
         self.max_steps = max_steps  # 迭代次数
@@ -37,6 +42,17 @@ class PSO(object):
         for step in range(self.max_steps):
             r1 = np.random.rand(self.population_size, self.dim)
             r2 = np.random.rand(self.population_size, self.dim)
+            
+            # 确定惯性权重
+            self.w = self.wmax - ((self.wmax - self.wmin) / self.max_steps) * step
+            if self.w > self.wmax:
+                self.wmax = self.w
+            if self.w < self.wmin:
+                self.wmin = self.w
+            
+            # 确定学习因子
+            #self.c1 = 2 * math.pow(math.sin((math.pi / 2) * (1 - step / self.max_steps)), 2)
+            #self.c2 = 2 * math.pow(math.sin((math.pi * step) / (2 * self.max_steps)), 2)
 
             # 更新速度和权重
             self.v = self.w * self.v + self.c1 * r1 * (self.p - self.x) + self.c2 * r2 * (self.pg - self.x)
@@ -52,23 +68,27 @@ class PSO(object):
             if np.min(fitness) < self.global_best_fitness:
                 self.pg = self.x[np.argmin(fitness)]
                 self.global_best_fitness = np.min(fitness)
-                
-                # 封装路径数据
-                d = dict()
-                d['x'] = self.pg[0]
-                d['y'] = self.pg[1]
-                evolve_data.append(d)
             #print('best fitness: %.5f, mean fitness: %.5f' % (self.global_best_fitness, np.mean(fitness)))  
+            # 封装路径数据
+            d = dict()
+            d['x'] = step
+            d['y'] = self.global_best_fitness
+            evolve_data.append(d)
         return evolve_data
  
 
-pso = PSO(w=0.8, population_size=100000, max_steps=1000, dim=2, learning_factor=[3, 3], v_max=1, target=[40, 30])
+
+pso = PSO(population_size=100, max_steps=2000, dim=2, v_max=1, target=[400, 300])
 data = pso.evolve()
 x = []
 y = []
 for t in data:
     x.append(t['x'])
     y.append(t['y'])
-plt.plot(x, y, 'red')
+plt.plot(x, y, 'r')
+
+font = {'family' : 'Times New Roman','weight' : 'normal','size' : 23}
+plt.xlabel('index', font)
+plt.ylabel('gpv', font)
 plt.show()
 
